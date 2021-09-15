@@ -79,7 +79,38 @@ class CompanyAPI:
     def GetCompanyList(self, id, count = 100):
         # Get a list of companies after the supplied id, to a maximum of count companies.
         # print("CompanyAPI.GetCompanyList: id [%s] count [%d]" % (id, count) )
-        pass
+        companyHTML = self.PresetHTML()
+        companyHTML += "<body><H1>Company Database Search</h1>\n"
+
+        rows = self.companyDB.GetCompanyList(id, count)
+
+        # Check for no result.
+        if len(rows) == 0:
+            companyHTML += "<p><strong>No companies matching search criteria found with ID greater than [%s]</strong></p>" % id
+
+        else:
+            # Must have a result.
+            # Start the table and add the headings.
+            companyHTML += "<div style=\"overflow-x:auto;\">\n"
+            companyHTML += "<table id=\"company\">\n"
+            companyHTML += "<tr><th>ID</th><th>Company name</th><th>Description</th><th>Tagline</th>"
+            companyHTML += "<th>Company email</th><th>Business number</th><th>Restricted</th>\n"
+
+            # Loop through the returned rows.
+            for id, row in rows.items():
+                restricted = "No" if row[6] == "0" else "Yes"
+
+                companyHTML += "<tr><td>%s</td><td>%s</td><td>%s</td>" % (row[0], row[1], row[2])
+                companyHTML += "<td>%s</td><td>%s</td><td>%s</td>" % (row[3], row[4], row[5])
+                companyHTML += "<td>%s</td></tr>\n" % restricted
+
+            companyHTML += "</table></div>\n"
+
+        companyHTML += "</body></html>\n"
+
+        # Format the HTML aspect - easier to read and debug.
+        return BeautifulSoup(companyHTML, 'html.parser').prettify()
+        # return companyHTML
 
 
     def LoadCSSFile(self):

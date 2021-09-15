@@ -79,7 +79,7 @@ def SaveRow(row):
 def TestAPI():
     # Test the company database api access.
 
-    # Get company 10.
+    # Get specific company.
     TestAPI_GetCompanyByID(0)
     sleep(1)
     TestAPI_GetCompanyByID(10)
@@ -88,6 +88,8 @@ def TestAPI():
     TestAPI_GetCompanyList(7)
     sleep(1)
     TestAPI_GetCompanyList(3, 2)
+    sleep(1)
+    TestAPI_GetCompanyList(3, 40)
 
 
 def TestAPI_GetCompanyByID(id):
@@ -106,15 +108,14 @@ def TestAPI_GetCompanyByID(id):
 def TestAPI_GetCompanyList(id, count = 5):
     # Test the GetCompanyList via the API.
     # print("TestAPI_GetCompanyList: id [%s] count [%d]" % (id, count) )
-    pass
 
-    # companyHTML = companyAPI.GetCompanyList(id, count)
-    #
-    # fi = open('company_list.html','w')
-    # fi.write(companyHTML)
-    # fi.close()
-    #
-    # webbrowser.open('company_list.html')
+    companyHTML = companyAPI.GetCompanyList(id, count)
+    
+    fi = open('company_list.html','w')
+    fi.write(companyHTML)
+    fi.close()
+    
+    webbrowser.open('company_list.html')
 
 
 def main():

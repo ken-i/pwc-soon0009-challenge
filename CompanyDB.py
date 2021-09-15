@@ -83,8 +83,9 @@ class CompanyDB:
         # Get a specific company by id and return its details.
         # print("CompanyDB.GetCompanyById: id [%s]" % id)
 
-        sql = "SELECT id, companyName, description, tagline, companyEmail, businessNumber, restricted "
-        sql += "FROM %s WHERE id = %s" % (self.table, str(id) )
+        sql = "SELECT id, companyName, description, tagline, companyEmail, businessNumber, restricted"
+        sql += " FROM %s" % self.table
+        sql += " WHERE id = %s" % str(id)
         # print("Executing SQL statement [%s]" % sql)
 
         row = []
@@ -100,7 +101,23 @@ class CompanyDB:
     def GetCompanyList(self, id, count = 100):
         # Get a list of companies after the supplied id, to a maximum of count companies.
         # print("CompanyDB.GetCompanyList: id [%s] count [%s]" % (id, count) )
-        pass
+
+        sql = "SELECT id, companyName, description, tagline, companyEmail, businessNumber, restricted"
+        sql += " FROM %s" % self.table
+        sql += " WHERE id > %s" % str(id)
+        sql += " ORDER BY id"
+        sql += " LIMIT %s" % str(count)
+        # print("Executing SQL statement [%s]" % sql)
+
+        rows = {}
+
+        for x in cursor.execute(sql):
+            if x[0] != "":
+                key = x[0]
+                rows[key] = x
+
+        # Return the result.
+        return rows
 
 
     def RecreateTable(self):
