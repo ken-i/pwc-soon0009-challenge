@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 
 #------------------------------------------------------
+
 # CompanyDB.py
 
-# Python class defining access interface to the Restricted companies database.
+# Python class defining access interface to the companies database.
+
 # The database is held in SQLite.
 
 # Companies database / tables:
@@ -11,13 +13,14 @@
 # Companies
 # ---------
 # pkID (Integer Primary Key)
-# id (Integer)
-# companyName (Text)
+# id (Integer)                Unique ID for the company.
+# companyName (Text)          Name of the company.
 # description (TEXT)
 # tagline (Text)
 # companyEmail (Text)
 # businessNumber (Text)
-# restricted (Text)
+# restricted (Integer)        [0|1] representing [False|True]
+
 #------------------------------------------------------
 
 import apsw
@@ -45,6 +48,7 @@ class CompanyDB:
 
     def AddNewCompany(self, row):
         # Write the company to the database.
+        # print("CompanyDB.AddNewCompany: row [%s]" % row)
 
         # Row is a dictionary of key / value pairs in any order:
         #     id, companyName, description, tagline, companyEmail, businessNumber, restricted
@@ -89,32 +93,35 @@ class CompanyDB:
         # print("Executing SQL statement [%s]" % sql)
 
         row = []
-
         for x in cursor.execute(sql):
             if x[0] != "":
                 row = x
+        # print("CompanyDB.GetCompanyById: row [%s]" % row)
 
         # Return the result.
         return row
 
 
-    def GetCompanyList(self, id, count = 100):
+    def GetCompanyList(self, id, count = 100, restricted = None):
         # Get a list of companies after the supplied id, to a maximum of count companies.
-        # print("CompanyDB.GetCompanyList: id [%s] count [%s]" % (id, count) )
+        # restrict = "All" if restricted is None else str(restricted)
+        # print("CompanyDB.GetCompanyList: id [%s] count [%s] restrict [%s]" % (id, count, restrict) )
 
         sql = "SELECT id, companyName, description, tagline, companyEmail, businessNumber, restricted"
         sql += " FROM %s" % self.table
         sql += " WHERE id > %s" % str(id)
+        if restricted is not None:
+            sql += " AND restricted = %s" % restricted
         sql += " ORDER BY id"
         sql += " LIMIT %s" % str(count)
         # print("Executing SQL statement [%s]" % sql)
 
         rows = {}
-
         for x in cursor.execute(sql):
             if x[0] != "":
                 key = x[0]
                 rows[key] = x
+        # print("CompanyDB.GetCompanyList: rows [%s]" % rows)
 
         # Return the result.
         return rows

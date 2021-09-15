@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 #------------------------------------------------------
+
 # CompanyAPI.py
 
 # Python class defining API access to the Companies database.
@@ -8,6 +9,7 @@
 # The class provides the functions for the Web API to access the database and
 # build the HTML (including CSS) representation of the data, which is returned
 # back to the caller.
+
 #------------------------------------------------------
 
 import os
@@ -36,6 +38,7 @@ class CompanyAPI:
 
         # Convert string for 'restricted' back to an integer boolean.
         row["restricted"] = "0" if row["restricted"].lower() == "no" else "1"
+        # print("CompanyAPI.AddNewCompany: row [%s]" % row)
 
         self.companyDB.AddNewCompany(row)
 
@@ -55,7 +58,7 @@ class CompanyAPI:
 
         else:
             # Must have a result.
-            restricted = "No" if row[6] == "0" else "Yes"
+            restricted = "No" if row[6] == 0 else "Yes"
 
             companyHTML += "<div style=\"overflow-x:auto;\">\n"
             companyHTML += "<table id=\"company\">\n"
@@ -76,13 +79,15 @@ class CompanyAPI:
         # return companyHTML
 
 
-    def GetCompanyList(self, id, count = 100):
+    def GetCompanyList(self, id, count = 100, restricted = None):
         # Get a list of companies after the supplied id, to a maximum of count companies.
-        # print("CompanyAPI.GetCompanyList: id [%s] count [%d]" % (id, count) )
+        # restrict = "All" if restricted is None else str(restricted)
+        # print("CompanyAPI.GetCompanyList: id [%s] count [%s] restrict [%s]" % (id, count, restrict) )
+
         companyHTML = self.PresetHTML()
         companyHTML += "<body><H1>Company Database Search</h1>\n"
 
-        rows = self.companyDB.GetCompanyList(id, count)
+        rows = self.companyDB.GetCompanyList(id, count, restricted)
 
         # Check for no result.
         if len(rows) == 0:
@@ -98,7 +103,7 @@ class CompanyAPI:
 
             # Loop through the returned rows.
             for id, row in rows.items():
-                restricted = "No" if row[6] == "0" else "Yes"
+                restricted = "No" if row[6] == 0 else "Yes"
 
                 companyHTML += "<tr><td>%s</td><td>%s</td><td>%s</td>" % (row[0], row[1], row[2])
                 companyHTML += "<td>%s</td><td>%s</td><td>%s</td>" % (row[3], row[4], row[5])

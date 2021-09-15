@@ -1,15 +1,11 @@
 #!/usr/bin/python3
 
-import apsw
-import csv
-import os
-import webbrowser
+#------------------------------------------------------
 
-from CompanyAPI import CompanyAPI
-from CompanyDB import CompanyDB
+# create_db.py
 
-from optparse import OptionParser
-from time import sleep
+# Python script to create the companies database and validate its operation
+# via the API.
 
 # CompanyAPI provides the interface to access the database and format the
 # returned data to HTML.
@@ -36,6 +32,19 @@ from time import sleep
 # 1. The 'id' field will be used to search for a company by ID, and will also prevents insertion order causing corruption.
 # 2. The 'business number' may include non-digit characters, and is therefore held as Text.
 # 3. The 'Restricted' value is supplied in the CSV as [Yes|No], and is converted to an integer boolean [1|0] in the database
+
+#------------------------------------------------------
+
+
+import csv
+import os
+import webbrowser
+
+from CompanyAPI import CompanyAPI
+from CompanyDB import CompanyDB
+
+from optparse import OptionParser
+from time import sleep
 
 
 def CreateDBTable(csvFile):
@@ -69,10 +78,13 @@ def LoadCSVFile(csvFile):
 def SaveRow(row):
     # Save the read row to the database.
     # Need to translate the row key names to the equivalent database column names.
-    newRow = dict({"id" : row["id"], "companyName" : row["fake-company-name"],
-                   "description" : row["description"], "tagline" : row["tagline"],
-                   "companyEmail" : row["company-email"], "businessNumber" : row["business number"],
-                   "restricted" : row["Restricted"] })
+    newRow = dict({"id"             : row["id"],
+                   "companyName"    : row["fake-company-name"],
+                   "description"    : row["description"],
+                   "tagline"        : row["tagline"],
+                   "companyEmail"   : row["company-email"],
+                   "businessNumber" : row["business number"],
+                   "restricted"     : row["Restricted"] })
     companyAPI.AddNewCompany(newRow)
 
 
@@ -82,14 +94,16 @@ def TestAPI():
     # Get specific company.
     TestAPI_GetCompanyByID(0)
     sleep(1)
+    TestAPI_GetCompanyByID(9)
+    sleep(1)
     TestAPI_GetCompanyByID(10)
 
     # Get a small list of companies.
     TestAPI_GetCompanyList(7)
     sleep(1)
-    TestAPI_GetCompanyList(3, 2)
+    TestAPI_GetCompanyList(3, 2, 1)
     sleep(1)
-    TestAPI_GetCompanyList(3, 40)
+    TestAPI_GetCompanyList(3, 20, 0)
 
 
 def TestAPI_GetCompanyByID(id):
@@ -105,11 +119,12 @@ def TestAPI_GetCompanyByID(id):
     webbrowser.open('company.html')
 
 
-def TestAPI_GetCompanyList(id, count = 5):
+def TestAPI_GetCompanyList(id, count = 5, restricted = None):
     # Test the GetCompanyList via the API.
-    # print("TestAPI_GetCompanyList: id [%s] count [%d]" % (id, count) )
+    # restrict = "All" if restricted is None else str(restricted)
+    # print("TestAPI_GetCompanyList: id [%s] count [%s] restricted [%s]" % (id, count, restrict) )
 
-    companyHTML = companyAPI.GetCompanyList(id, count)
+    companyHTML = companyAPI.GetCompanyList(id, count, restricted)
     
     fi = open('company_list.html','w')
     fi.write(companyHTML)
