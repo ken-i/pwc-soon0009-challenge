@@ -54,7 +54,7 @@ class CompanyAPI:
 
         # Check for no result.
         if len(row) == 0:
-            companyHTML += "<p><strong>No company with ID [%s]</strong></p>" % id
+            companyHTML += "<p><strong>No company found with ID [%s]</strong></p>" % id
 
         else:
             # Must have a result.
@@ -91,7 +91,9 @@ class CompanyAPI:
 
         # Check for no result.
         if len(rows) == 0:
-            companyHTML += "<p><strong>No companies matching search criteria found with ID greater than [%s]</strong></p>" % id
+            restrict = "" if restricted is None else "Restricted" if restricted else "Not restricted"
+            # companyHTML += "<p><strong>No companies matching search criteria found with ID greater than [%s]</strong></p>" % id
+            companyHTML += "<p><strong>No companies matching search criteria - %s with ID greater than [%s]</strong></p>" % (restrict, id)
 
         else:
             # Must have a result.
