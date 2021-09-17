@@ -147,3 +147,12 @@ All data from the Web API will be returned via a JSON data structure, as:
   }
 }
 ```
+The *data* aspect of the JSON structure will only be an array for the *company list* operation, regardless of how many results are returned.
+
+### Python packages
+
+The project uses **python3** and the followin Python modules to deliver the functionality:
+
+**python3-apsw** provides the interface to **SQLite**
+
+**python3-hug** provides a simple Web API server
