@@ -13,7 +13,6 @@
 #------------------------------------------------------
 
 import json
-# import os
 
 from CompanyDB import CompanyDB
 

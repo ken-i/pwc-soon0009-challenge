@@ -24,7 +24,6 @@
 #------------------------------------------------------
 
 import apsw
-import string
 
 from builtins import int
 

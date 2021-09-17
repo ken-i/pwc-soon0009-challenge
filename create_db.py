@@ -37,7 +37,6 @@
 
 
 import csv
-import os
 import webbrowser
 
 from CompanyAPI import CompanyAPI
@@ -101,7 +100,7 @@ def TestAPI():
     sleep(1)
     TestAPI_GetCompanyList(3, 2, 1)
     sleep(1)
-    TestAPI_GetCompanyList(5, 20, 0)
+    TestAPI_GetCompanyList(5, 10, 0)
 
 
 def TestAPI_GetCompanyByID(id):
@@ -140,8 +139,6 @@ def main():
         description="Create / Recreate a relational database and optionally load the table from a CSV file.",
         epilog="The default values prevent the need to carry any overrides to downstream process equivalent options.")
 
-    # parser.add_option("--css", dest="cssFile", metavar="FILE", default="company.css",
-    #                   help="name of the CSS file to format the HTML output. Default: [company.css]")
     parser.add_option("--csv", dest="csvFile", metavar="FILE", default="faux_id_fake_companies.csv",
                       help="name of the existing CSV file holding the company list. Default: [faux_id_fake_companies.csv]")
     parser.add_option("--db", dest="database", default="company",
@@ -166,7 +163,7 @@ def main():
     if options.createDBTable:
         CreateDBTable(options.csvFile)
 
-    if (options.loadDB):
+    if options.loadDB:
         if os.path.isfile(options.csvFile):
             LoadCSVFile(options.csvFile)
         else:
