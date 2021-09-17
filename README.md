@@ -156,3 +156,56 @@ The project uses **python3** and the followin Python modules to deliver the func
 **python3-apsw** provides the interface to **SQLite**
 
 **python3-hug** provides a simple Web API server
+
+## Testing
+
+The application can be run from with its own directory, by checking out the repository and following the next steps.
+
+To create the database and populate the table with the supplied fake company data:
+
+```
+./create_db.py
+```
+If you want to verify the **No data** error responses, just rerun the create script with the noload option as:
+
+```
+./create_db.py --noload
+```
+
+### Testing without a Web API
+
+To test the result without starting the Web API server, use one of the above command and specify test as:
+
+```
+./create_db.py --test
+./create_db.py --noload --test
+```
+which will open new tabs in your default browser with the JSON result per query.
+
+### Testing with a Web API
+
+Hug provides a nice simple interface for servicing Web API requests.
+
+Start the server in a terminal window as:
+
+```
+hug -f ./companyWebAPI.py
+```
+and the terminal will indicate when it is ready with a message like:
+
+```
+Serving on :8000...
+```
+
+Testing is best server via pasting the following entries in a web browser:
+
+```
+http://localhost:8000/
+http://localhost:8000/GetCompanyById?id=0
+http://localhost:8000/GetCompanyById?id=9
+http://localhost:8000/GetCompanyById?id=10
+http://localhost:8000/GetCompanyList?offset=0&count=5
+http://localhost:8000/GetCompanyList?offset=5&count=10&restricted=0
+http://localhost:8000/GetCompanyList?offset=3&count=2&restricted=1
+```
+Testing of the above should also work as a **curl** command from the command line.

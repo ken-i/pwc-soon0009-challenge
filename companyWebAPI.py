@@ -30,10 +30,10 @@ from CompanyDB import CompanyDB
 # from optparse import OptionParser
 
 
-# @hug.get('/')
-# def home():
-#     # Returns the home (root) page data for the Web API.
-#     return "Home page"
+@hug.get('/')
+def home():
+    # Returns the home (root) page data for the Web API.
+    return "Home page"
 
 
 @hug.get()
