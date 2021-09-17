@@ -117,7 +117,7 @@ class CompanyDB:
         sql += " ORDER BY id"
         sql += " LIMIT %s" % str(count)
         sql += " OFFSET %s" % str(offset)
-        print("Executing SQL statement [%s]" % sql)
+        # print("Executing SQL statement [%s]" % sql)
 
         rows = {}
         for x in cursor.execute(sql):

@@ -1,4 +1,7 @@
 .*.swp
 .project
 .pydevproject
+
+company.db3
+
 __pycache__/

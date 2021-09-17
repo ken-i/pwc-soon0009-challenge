@@ -12,22 +12,18 @@
 
 #------------------------------------------------------
 
-import os
+import json
+# import os
 
 from CompanyDB import CompanyDB
-
-from bs4 import BeautifulSoup
 
 
 class CompanyAPI:
 
-    def __init__(self, companyDB, cssFile = "company.css"):
+    def __init__(self, companyDB):
         # Initialise the class with an instance of the CompanyDB class.
 
         self.companyDB = companyDB
-        self.cssFile = cssFile
-        self.cssText = ""
-        self.LoadCSSFile() 
 
 
     def AddNewCompany(self, row):
@@ -43,40 +39,46 @@ class CompanyAPI:
         self.companyDB.AddNewCompany(row)
 
 
+    def FormatTupleAsDict(self, row):
+        # Converts the return DB row as a dictionary.
+        restricted = "No" if row[6] == 0 else "Yes"
+
+        rowDict = {}
+        rowDict["id"] = row[0]
+        rowDict["companyName"] = row[1]
+        rowDict["description"] = row[2]
+        rowDict["tagline"] = row[3]
+        rowDict["companyEmail"] = row[4]
+        rowDict["businessNumber"] = row[5]
+        rowDict["restricted"] = restricted
+
+        # print("CompanyAPI.FormatTupleAsDict: row [%s] rowDict [%s]" % (row, rowDict) )
+        return rowDict
+
+
     def GetCompanyById(self, id):
         # Get a specific company by id and return its details.
         # print("CompanyAPI.GetCompanyById: id [%s]" % id)
 
-        companyHTML = self.PresetHTML()
-        companyHTML += "<body><H1>Company Database Search</h1>\n"
+        jsonStr = ""
 
         row = self.companyDB.GetCompanyById(id)
 
         # Check for no result.
         if len(row) == 0:
-            companyHTML += "<p><strong>No company found with ID [%s]</strong></p>" % id
+            error = "No company found with ID [%s]" % id
+            respDict = { "result" : "error", "error" : error}
+            jsonStr += json.dumps(respDict, indent = 4)
 
         else:
             # Must have a result.
-            restricted = "No" if row[6] == 0 else "Yes"
+            rowDict = self.FormatTupleAsDict(row)
+            respDict = { "result" : "ok", "data" : rowDict}
+            jsonStr += json.dumps(respDict, indent = 4)
 
-            companyHTML += "<div style=\"overflow-x:auto;\">\n"
-            companyHTML += "<table id=\"company\">\n"
-            companyHTML += "<tr><th>Company</th><th>%s</th></tr>\n" % row[1]
-            companyHTML += "<tr><td>ID</td><td>%s</td></tr>\n" % row[0]
-            companyHTML += "<tr><td>Description</td><td>%s</td></tr>\n" % row[2]
-            companyHTML += "<tr><td>Tagline</td><td>%s</td></tr>\n" % row[3]
-            companyHTML += "<tr><td>Email</td><td>%s</td></tr>\n" % row[4]
-            companyHTML += "<tr><td>Business number</td><td>%s</td></tr>\n" % row[5]
-            companyHTML += "<tr><td>Restricted</td><td>%s</td></tr>\n" % restricted
+        # print("CompanyAPI.GetCompanyById: JSON [%s]" % jsonStr)
 
-            companyHTML += "</table></div>\n"
-
-        companyHTML += "</body></html>\n"
-
-        # Format the HTML aspect - easier to read and debug.
-        return BeautifulSoup(companyHTML, 'html.parser').prettify()
-        # return companyHTML
+        return jsonStr
 
 
     def GetCompanyList(self, offset, count = 100, restricted = None):
@@ -87,57 +89,30 @@ class CompanyAPI:
         # restrict = "All" if restricted is None else str(restricted)
         # print("CompanyAPI.GetCompanyList: offset [%s] count [%s] restrict [%s]" % (offset, count, restrict) )
 
-        companyHTML = self.PresetHTML()
-        companyHTML += "<body><H1>Company Database Search</h1>\n"
+        jsonStr = ""
 
         rows = self.companyDB.GetCompanyList(offset, count, restricted)
 
         # Check for no result.
         if len(rows) == 0:
             restrict = "" if restricted is None else "Restricted" if restricted else "Not restricted"
-            # companyHTML += "<p><strong>No companies matching search criteria found with ID greater than [%s]</strong></p>" % id
-            companyHTML += "<p><strong>No companies matching search criteria - %s with ID greater than [%s]</strong></p>" % (restrict, id)
+
+            error = "No companies matching search criteria - %s with ID greater than [%s]" % (restrict, id)
+            respDict = { "result" : "error", "error" : error}
+            jsonStr += json.dumps(respDict, indent = 4)
 
         else:
             # Must have a result.
-            # Start the table and add the headings.
-            companyHTML += "<div style=\"overflow-x:auto;\">\n"
-            companyHTML += "<table id=\"company\">\n"
-            companyHTML += "<tr><th>ID</th><th>Company name</th><th>Description</th><th>Tagline</th>"
-            companyHTML += "<th>Company email</th><th>Business number</th><th>Restricted</th>\n"
+            rowList = []
 
             # Loop through the returned rows.
             for id, row in rows.items():
-                restricted = "No" if row[6] == 0 else "Yes"
+                rowDict = self.FormatTupleAsDict(row)
+                rowList.append(rowDict)
 
-                companyHTML += "<tr><td>%s</td><td>%s</td><td>%s</td>" % (row[0], row[1], row[2])
-                companyHTML += "<td>%s</td><td>%s</td><td>%s</td>" % (row[3], row[4], row[5])
-                companyHTML += "<td>%s</td></tr>\n" % restricted
+            respDict = { "result" : "ok", "data" : rowList}
+            jsonStr += json.dumps(respDict, indent = 4)
 
-            companyHTML += "</table></div>\n"
+        # print("CompanyAPI.GetCompanyList: JSON [%s]" % jsonStr)
 
-        companyHTML += "</body></html>\n"
-
-        # Format the HTML aspect - easier to read and debug.
-        return BeautifulSoup(companyHTML, 'html.parser').prettify()
-        # return companyHTML
-
-
-    def LoadCSSFile(self):
-        # Preload the CSS file contentss to a string for easier usage.
-
-        if os.path.isfile(self.cssFile):
-            # Read whole file to a string.
-            text_file = open(self.cssFile, "r")
-            self.cssText = text_file.read()
-            text_file.close()
-
-
-    def PresetHTML(self):
-        # Preset the HTML to be returned.
-        companyHTML = "<!DOCTYPE html><html><head><title>Company DB search</title>\n"
-        if self.cssText:
-            companyHTML += "<style>\n" + self.cssText + "</style>\n"
-        companyHTML += "</head>\n"
-
-        return companyHTML
+        return jsonStr

@@ -8,7 +8,7 @@
 # via the API.
 
 # CompanyAPI provides the interface to access the database and format the
-# returned data to HTML.
+# returned data to JSON.
 # This is the only access the Web API will use.
 
 # CompanyDB provides the interface to the Companies database.
@@ -55,11 +55,6 @@ def CreateDBTable(csvFile):
     companyDB.CountRows()
     print("Recreate DB statistics: total [%d] keys: min [%s] max [%s]" % (companyDB.totalcount, companyDB.minkey, companyDB.maxkey) )
 
-    # Load the CSV file into the database.
-    LoadCSVFile(csvFile)
-    companyDB.CountRows()
-    print("LoadCSVFile statistics: total [%d] keys: min [%s] max [%s]" % (companyDB.totalcount, companyDB.minkey, companyDB.maxkey) )
-
 
 def LoadCSVFile(csvFile):
     # Open the CSV file and sniff out the dialect / format used.
@@ -73,6 +68,9 @@ def LoadCSVFile(csvFile):
             # for key in row.keys():
             #     print("CSV file row: key [%s] value [%s]" % (key, row[key]) )
             SaveRow(row)
+
+    companyDB.CountRows()
+    print("LoadCSVFile statistics: total [%d] keys: min [%s] max [%s]" % (companyDB.totalcount, companyDB.minkey, companyDB.maxkey) )
 
 
 def SaveRow(row):
@@ -112,11 +110,11 @@ def TestAPI_GetCompanyByID(id):
 
     companyHTML = companyAPI.GetCompanyById(id)
 
-    fi = open('company.html','w')
+    fi = open('company.json','w')
     fi.write(companyHTML)
     fi.close()
 
-    webbrowser.open('company.html')
+    webbrowser.open('company.json')
 
 
 def TestAPI_GetCompanyList(id, count = 5, restricted = None):
@@ -126,11 +124,11 @@ def TestAPI_GetCompanyList(id, count = 5, restricted = None):
 
     companyHTML = companyAPI.GetCompanyList(id, count, restricted)
     
-    fi = open('company_list.html','w')
+    fi = open('company_list.json','w')
     fi.write(companyHTML)
     fi.close()
     
-    webbrowser.open('company_list.html')
+    webbrowser.open('company_list.json')
 
 
 def main():
@@ -139,11 +137,11 @@ def main():
 
     # Parse the command line options.
     parser = OptionParser(
-        description="Create / Recreate a relational database from a CSV file.",
+        description="Create / Recreate a relational database and optionally load the table from a CSV file.",
         epilog="The default values prevent the need to carry any overrides to downstream process equivalent options.")
 
-    parser.add_option("--css", dest="cssFile", metavar="FILE", default="company.css",
-                      help="name of the CSS file to format the HTML output. Default: [company.css]")
+    # parser.add_option("--css", dest="cssFile", metavar="FILE", default="company.css",
+    #                   help="name of the CSS file to format the HTML output. Default: [company.css]")
     parser.add_option("--csv", dest="csvFile", metavar="FILE", default="faux_id_fake_companies.csv",
                       help="name of the existing CSV file holding the company list. Default: [faux_id_fake_companies.csv]")
     parser.add_option("--db", dest="database", default="company",
@@ -151,7 +149,9 @@ def main():
     parser.add_option("--table", dest="dbTable", metavar="TABLE", default="Company",
                       help="name of the table. Default: [Restricted]")
     parser.add_option("--nocreate", dest="createDBTable", action="store_false", default=True,
-                      help="stops the create / recreate of the database table. Default is to create the table")
+                      help="stops the create / recreate of the database table. Default is to create the table.")
+    parser.add_option("--noload", dest="loadDB", action="store_false", default=True,
+                      help="stops the loading of data into the database table. Default is to load the data.")
     parser.add_option("--test", dest="testAPI", action="store_true", default=False,
                       help="determines if a quick test of the API occurs. Default: [False]")
 
@@ -161,11 +161,14 @@ def main():
     companyDB = CompanyDB(options.database + ".db3", options.dbTable)
 
     # Instantiate the Company Web API interface.
-    companyAPI = CompanyAPI(companyDB, options.cssFile)
+    companyAPI = CompanyAPI(companyDB)
 
     if options.createDBTable:
+        CreateDBTable(options.csvFile)
+
+    if (options.loadDB):
         if os.path.isfile(options.csvFile):
-            CreateDBTable(options.csvFile)
+            LoadCSVFile(options.csvFile)
         else:
             print("ERROR: File [%s] does not exist\n" % options.csvFile, file=sys.stderr)
             # parser.parse_args(args=["-h"])
