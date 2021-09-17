@@ -101,7 +101,7 @@ def TestAPI():
     sleep(1)
     TestAPI_GetCompanyList(3, 2, 1)
     sleep(1)
-    TestAPI_GetCompanyList(3, 20, 0)
+    TestAPI_GetCompanyList(5, 20, 0)
 
 
 def TestAPI_GetCompanyByID(id):
