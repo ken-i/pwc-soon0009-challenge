@@ -79,15 +79,18 @@ class CompanyAPI:
         # return companyHTML
 
 
-    def GetCompanyList(self, id, count = 100, restricted = None):
-        # Get a list of companies after the supplied id, to a maximum of count companies.
+    def GetCompanyList(self, offset, count = 100, restricted = None):
+        # Get a list of companies:
+        #     matching the restricted flag if supplied,
+        #     starting at offset in the SQL query result,
+        #     to a maximum of count companies.
         # restrict = "All" if restricted is None else str(restricted)
-        # print("CompanyAPI.GetCompanyList: id [%s] count [%s] restrict [%s]" % (id, count, restrict) )
+        # print("CompanyAPI.GetCompanyList: offset [%s] count [%s] restrict [%s]" % (offset, count, restrict) )
 
         companyHTML = self.PresetHTML()
         companyHTML += "<body><H1>Company Database Search</h1>\n"
 
-        rows = self.companyDB.GetCompanyList(id, count, restricted)
+        rows = self.companyDB.GetCompanyList(offset, count, restricted)
 
         # Check for no result.
         if len(rows) == 0:

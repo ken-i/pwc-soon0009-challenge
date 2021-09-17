@@ -102,19 +102,22 @@ class CompanyDB:
         return row
 
 
-    def GetCompanyList(self, id, count = 100, restricted = None):
-        # Get a list of companies after the supplied id, to a maximum of count companies.
+    def GetCompanyList(self, offset, count = 100, restricted = None):
+        # Get a list of companies:
+        #     matching the restricted flag if supplied,
+        #     starting at offset in the SQL query result,
+        #     to a maximum of count companies.
         # restrict = "All" if restricted is None else str(restricted)
-        # print("CompanyDB.GetCompanyList: id [%s] count [%s] restrict [%s]" % (id, count, restrict) )
+        # print("CompanyDB.GetCompanyList: offset [%s] count [%s] restrict [%s]" % (offset, count, restrict) )
 
         sql = "SELECT id, companyName, description, tagline, companyEmail, businessNumber, restricted"
         sql += " FROM %s" % self.table
-        sql += " WHERE id > %s" % str(id)
         if restricted is not None:
-            sql += " AND restricted = %s" % restricted
+            sql += " WHERE restricted = %s" % restricted
         sql += " ORDER BY id"
         sql += " LIMIT %s" % str(count)
-        # print("Executing SQL statement [%s]" % sql)
+        sql += " OFFSET %s" % str(offset)
+        print("Executing SQL statement [%s]" % sql)
 
         rows = {}
         for x in cursor.execute(sql):

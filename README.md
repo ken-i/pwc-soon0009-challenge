@@ -57,17 +57,15 @@ The database will be handled using SQLite, with the class on instantiation autom
 - get a companies details using its ID
 - get a paged list of companies, with the minimum being the restricted companies
 
-**CompanyAPI.py** will provide the web access to the database and return the results of any query / action in HTML / CSS.
+**CompanyAPI.py** will provide the web access to the database and return the results of any query / action in JSON.
 
 It is envisaged that all company actions will occur via the *CompanyAPI* class, receiving an instance of the *CompanyDB* class on instantiation in order to access the company database excluding database / table creation.
 
 The *CompanyAPI* class will provide the following functionality:
-- load the CSS file on instantiation if one is provided and exists
 - provide a single point of data conversion between web and database
 - add a new company
-- include the CSS in the returned HTML
-- provide the home page for the Web API
-- get a companies details using its ID
+- include a result and [error|data] in the returned JSON
+- get the details of a companies using its ID
 - get a paged list of companies, with the minimum being the restricted companies
 
 ### Scripts
@@ -77,14 +75,75 @@ The *CompanyAPI* class will provide the following functionality:
 The intent is that the script will be used to:
 - instantiate the *CompanyDB* class to automatically create the database if it does not exist
 - instantiate the *CompanyAPI* class, passing in the *CompanyDB* class
-- unless the *--nocreate* option is specified, and the CSV file exists:  
-create the company table by calling the *CompanyDB* class function  
-read the CSV file contents, and call the *CompanyAPI* function to add the company to the database per entry
+- unless the *--nocreate* option is specified, create the company table by calling the *CompanyDB* class function  
+- unless the *--noload* option is specified, load the CSV file contents, and call the *CompanyAPI* function to add the company to the database per entry
 - optionally perform a few of executions of the *CompanyAPI* to access data from the company database:  
-the results are saved to a *html* file which is passed directly to the default browser to display
+the results are saved to a *JSON* file which is passed directly to the default browser to display
 
 **company_web_api** will handle the request / response process for the hosted web site.
 
 The intent is that the script will be always on - listening on a port waiting for requests, and that:
 - the home page will be automatically supplied on initial request
 - services the end points as required by the home and subsequent page actions
+
+### Files
+
+**company.html** will provide the base web page definition including any code (JavaScript) to perform any actions.
+
+Three sections will be provided on the web page:
+- *search* container will provide the search fields / buttons, and hold any error response  
+On requesting the details of a company, the *company list* container will be automatically hidden.  
+On requesting a company list, the *company* container will be automatically hidden.
+- *company* container will sit within the *search* container - initially hidden  
+The container will be populated by any successful response and be made visible.  
+- *company list* container will sit within the *search* container - initially hidden  
+The container will be populated by any successful response and made visible.
+
+**company.css** will provide the web page Cascading Style Sheet (CSS)
+
+The CSS will be referenced by the HTML file, and describe any text, button, table formatting.
+
+### Web API queries
+
+Web API queries will be used to populate the displayed page with data or error responses.
+
+##### Company by ID
+
+Accessing a company by *id* will require passing the company ID to via the Web API query.
+For example `<web address>/GetCompanyById?id=<id>`
+
+##### Company list
+
+Accessing a company list will be paged based on a *count* per page to display value.
+
+The web page will keep track of where we are in the list - which page we are on.
+This enables passing teo value via the Web API query: the current *offset* and the *count* of rows to return.
+That is, the *offset* would be `(page - 1) * count`.
+
+An optional parameter will be passed to indicate whether we want: restricted, non-restricted, or all companies.
+
+For example:
+- to return companies in the list irrespective of restriction status:  
+```<web address>/GetCompanyList?id=<id>&count=<count>```
+- to return companies based on restriction status:  
+```<web address>/GetCompanyList?id=<id>&count=<count>&restricted=[0|1]```
+
+### JSON data response
+
+All data from the Web API will be returned via a JSON data structure, as:
+
+```
+{
+  "result" : "ok|error",
+  "error"  : "Error text if an error results",
+  "data" : {
+    [
+      {
+        "id' : "integer as a string",
+        ... company details ...
+      }
+      ...
+    ]
+  }
+}
+```
