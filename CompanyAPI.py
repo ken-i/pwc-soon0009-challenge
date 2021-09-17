@@ -94,7 +94,7 @@ class CompanyAPI:
 
         # Check for no result.
         if len(rows) == 0:
-            restrict = "" if restricted is None else " Restricted" if restricted else " Not restricted"
+            restrict = "" if restricted is None else " Restricted" if restricted == "1" else " Not restricted"
 
             error = "No companies matching search criteria -%s with offset [%s] into the result set" % (restrict, offset)
             respDict = { "result" : "error", "error" : error}
