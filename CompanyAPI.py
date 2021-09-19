@@ -12,8 +12,6 @@
 
 #------------------------------------------------------
 
-import json
-
 from CompanyDB import CompanyDB
 
 
@@ -67,17 +65,15 @@ class CompanyAPI:
         if len(row) == 0:
             error = "No company found with ID [%s]" % id
             respDict = { "result" : "error", "error" : error}
-            jsonStr += json.dumps(respDict, indent = 4)
+            print("CompanyAPI.GetCompanyById: response [%s]" % respDict)
+            return respDict
 
         else:
             # Must have a result.
             rowDict = self.FormatTupleAsDict(row)
             respDict = { "result" : "ok", "data" : rowDict}
-            jsonStr += json.dumps(respDict, indent = 4)
-
-        # print("CompanyAPI.GetCompanyById: JSON [%s]" % jsonStr)
-
-        return jsonStr
+            print("CompanyAPI.GetCompanyById: response [%s]" % respDict)
+            return respDict
 
 
     def GetCompanyList(self, offset, count = 100, restricted = None):
@@ -98,7 +94,8 @@ class CompanyAPI:
 
             error = "No companies matching search criteria -%s with offset [%s] into the result set" % (restrict, offset)
             respDict = { "result" : "error", "error" : error}
-            jsonStr += json.dumps(respDict, indent = 4)
+            print("CompanyAPI.GetCompanyList: response [%s]" % respDict)
+            return respDict
 
         else:
             # Must have a result.
@@ -110,8 +107,5 @@ class CompanyAPI:
                 rowList.append(rowDict)
 
             respDict = { "result" : "ok", "data" : rowList}
-            jsonStr += json.dumps(respDict, indent = 4)
-
-        # print("CompanyAPI.GetCompanyList: JSON [%s]" % jsonStr)
-
-        return jsonStr
+            print("CompanyAPI.GetCompanyList: response [%s]" % respDict)
+            return respDict

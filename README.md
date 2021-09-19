@@ -64,7 +64,7 @@ It is envisaged that all company actions will occur via the *CompanyAPI* class, 
 The *CompanyAPI* class will provide the following functionality:
 - provide a single point of data conversion between web and database
 - add a new company
-- include a result and [error|data] in the returned JSON
+- include a result and [error|data] in the returned **dict**ionary structure
 - get the details of a companies using its ID
 - get a paged list of companies, with the minimum being the restricted companies
 
@@ -80,7 +80,7 @@ The intent is that the script will be used to:
 - optionally perform a few of executions of the *CompanyAPI* to access data from the company database:  
 the results are saved to a *JSON* file which is passed directly to the default browser to display
 
-**company_web_api** will handle the request / response process for the hosted web site.
+**companyWebAPI** will handle the request / response process for the hosted web site.
 
 The intent is that the script will be always on - listening on a port waiting for requests, and that:
 - the home page will be automatically supplied on initial request
@@ -124,9 +124,9 @@ An optional parameter will be passed to indicate whether we want: restricted, no
 
 For example:
 - to return companies in the list irrespective of restriction status:  
-```<web address>/GetCompanyList?id=<id>&count=<count>```
+```<web address>/GetCompanyList?offset=<offset>&count=<count>```
 - to return companies based on restriction status:  
-```<web address>/GetCompanyList?id=<id>&count=<count>&restricted=[0|1]```
+```<web address>/GetCompanyList?offset=<offset>&count=<count>&restricted=[0|1]```
 
 ### JSON data response
 

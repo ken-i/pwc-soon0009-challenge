@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>REST Client</title>
+</head>
+<body>
+    <h1>Company GET Form</h1>
+    <form>
+        <label>Company ID:</label> <input id="compID" type="number" /><br>
+        <label>Request:</label> <textarea id="request" name="request" rows="1" cols="100"/></textarea><br>
+        <h2>Response</h2>
+        <label>Result:</label> <input id="result" type="text" /><br>
+        <label>Error:</label> <textarea id="error" name="error" rows="1" cols="100"/></textarea><br>
+        <label>Raw:</label> <textarea id="raw" name="raw" rows="10" cols="100"/></textarea><br>
+    </form><br>
+    <button onclick="getResource()">Get Resource</button>
+</body>
+<script>
+    function getResource() {
+        compID = document.querySelector("#compID").value
+        const resource = "http://localhost:8000/GetCompanyById?id="+compID;
+        document.querySelector("#request").value = resource
+        const myInit = {
+            method: 'GET',
+            headers: {},
+            mode: 'no-cors',
+            cache: 'default'
+        };
+        const request = new Request(resource, myInit);
+        fetch(request)
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error("HTTP error, status = " + response.status);
+            }
+            console.error("Response - about to convert response: " + response);
+            return response.json();
+        })
+        .then(function(json) {
+            console.error("Response - about to process JSON data: " + json);
+            var result = json.result;
+            document.querySelector("#result").value = result;
+            if (ressult != "ok") {
+                var error = json.error;
+                document.querySelector("#error").value = error;
+            }
+            else {
+                document.querySelector("#error").value = "";
+            }
+        })
+        .catch(error => {
+            document.querySelector("#error").value = error;
+            console.error(error);
+        });
+    }
+</script>
+
+<!--
+{
+    "result": "error",
+    "error": "No company found with ID [0]"
+}
+
+{
+    "result": "ok",
+    "data": {
+        "id": 1,
+        "companyName": "Bergstrom PLC",
+        "description": "Reactive Content-Based Complexity",
+        "tagline": "Drive Leading-Edge Architectures",
+        "companyEmail": "becker.jeremie@nikolaus.com",
+        "businessNumber": "682216138",
+        "restricted": "No"
+    }
+}
+
+    fetch(request)
+    .then(response => {
+        console.error("Response - " + response);
+        var myJSON = response.json();
+        console.error("myJSON - " + myJSON);
+        console.error("Response - process JSON data");
+        var result = myJSON.result;
+        document.querySelector("#result").value = result;
+        if (ressult != "ok") {
+            var error = myJSON.error;
+            document.querySelector("#error").value = error;
+        }
+        else {
+            document.querySelector("#error").value = "";
+        }
+    })
+    .catch(error => {
+        document.querySelector("#error").value = error;
+        console.error(error);
+    });
+
+    fetch(request)
+    .then(response => {
+        console.error("Response - about to convert JSON");
+        response.json();
+        console.error("Response - about to process JSON data");
+    })
+    .then(json => {
+        console.error("Response - process JSON data: " + json);
+        var result = json.result;
+        document.querySelector("#result").value = result;
+        if (ressult != "ok") {
+            var error = json.error;
+            document.querySelector("#error").value = error;
+        }
+        else {
+            document.querySelector("#error").value = "";
+        }
+    })
+    .catch(error => {
+        document.querySelector("#error").value = error;
+        console.error(error);
+    });
+
+    fetch(request).then(response => {
+        console.error("Response - about to convert JSON");
+        return response.json().then(data => {
+            console.error("Response - about to process JSON data");
+            var result = data.result;
+            document.querySelector("#result").value = result;
+            if (ressult != "ok") {
+                var error = data.error;
+                document.querySelector("#error").value = error;
+            }
+            else {
+                document.querySelector("#error").value = "";
+            }
+        })
+    })
+    .catch(error => {
+        document.querySelector("#error").value = error;
+        console.error(error);
+    });
+
+    fetch(request)
+    .then(response => response.json())
+    .then(data => {
+        var result = data.result;
+        document.querySelector("#result").value = result;
+        if (ressult != "ok") {
+            var error = data.error;
+            document.querySelector("#error").value = error;
+        }
+        else {
+            document.querySelector("#error").value = "";
+        }
+    })
+    .catch(error => {
+        document.querySelector("#error").value = error;
+        console.error(error);
+    });
+
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("HTTP error, status = " + response.status);
+        }
+        return response.json();
+    })
+
+    .then(response => response.text())
+    .then(text => {
+        document.querySelector("#raw").value = text;
+    })
+-->
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Company DB search</title>
+<link rel="stylesheet" href="company.css">
+</head>
+<body>
+	<h1>Company Database Search</h1>
+	<p>Search for a company or list companies in a database via REST
+		API</p>
+	<div id="queryForm">
+		<h2>Search Form</h2>
+		<form action="/GetCompanyById">
+			<fieldset>
+				<legend>Get company details:</legend>
+				<label for="companyId">Id:</label> <input type="number" id="companyId"
+					name="companyId"><br>
+				<button type="button" onclick="alert('Get company details!')">Get
+					Details</button>
+			</fieldset>
+        </form>
+        <form action="/GetCompanyList">
+			<fieldset>
+				<legend>Get company details:</legend>
+                <input type="radio" id="restricted" name="restricted" value="1">
+                <label for="restricted">Restricted</label><br>
+                <input type="radio" id="notRestricted" name="notRestricted" value="0">
+                <label for="notRestricted">Non-Restricted</label><br>
+                <input type="radio" id="all" name="all">
+                <label for="all">All</label><br>
+				<button type="button" onclick="alert('List companies!')">List
+					Companies</button>
+			</fieldset>
+		</form>
+
+		<div id="company" style="overflow-x: auto;">
+			<table class="company">
+				<tr>
+					<th>Company</th>
+					<th>Leuschke, Stamm and Green</th>
+				</tr>
+				<tr>
+					<td>ID</td>
+					<td>10</td>
+				</tr>
+				<tr>
+					<td>Description</td>
+					<td>User-Friendly Global Encryption</td>
+				</tr>
+				<tr>
+					<td>Tagline</td>
+					<td>Synergize Holistic Portals</td>
+				</tr>
+				<tr>
+					<td>Email</td>
+					<td>berenice64@krajcik.com</td>
+				</tr>
+				<tr>
+					<td>Business number</td>
+					<td>441172968</td>
+				</tr>
+				<tr>
+					<td>Restricted</td>
+					<td>Yes</td>
+				</tr>
+			</table>
+		</div>
+		<div id="companyList"></div>
+	</div>
+</body>
+</html>
