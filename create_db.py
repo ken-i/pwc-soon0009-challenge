@@ -37,6 +37,7 @@
 
 
 import csv
+import json
 import os
 import webbrowser
 
@@ -108,10 +109,11 @@ def TestAPI_GetCompanyByID(id):
     # Test the GetCompanyByID via the API.
     # print("TestAPI_GetCompanyByID: id [%s]" % id)
 
-    companyHTML = companyAPI.GetCompanyById(id)
+    companyDict = companyAPI.GetCompanyById(id)
+    jsonStr = json.dumps(companyDict)
 
     fi = open('company.json','w')
-    fi.write(companyHTML)
+    fi.write(jsonStr)
     fi.close()
 
     webbrowser.open('company.json')
@@ -122,10 +124,11 @@ def TestAPI_GetCompanyList(id, count = 5, restricted = None):
     # restrict = "All" if restricted is None else str(restricted)
     # print("TestAPI_GetCompanyList: id [%s] count [%s] restricted [%s]" % (id, count, restrict) )
 
-    companyHTML = companyAPI.GetCompanyList(id, count, restricted)
+    companyDict = companyAPI.GetCompanyList(id, count, restricted)
+    jsonStr = json.dumps(companyDict)
     
     fi = open('company_list.json','w')
-    fi.write(companyHTML)
+    fi.write(jsonStr)
     fi.close()
     
     webbrowser.open('company_list.json')

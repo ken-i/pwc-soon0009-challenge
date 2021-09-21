@@ -107,12 +107,12 @@ The CSS will be referenced by the HTML file, and describe any text, button, tabl
 
 Web API queries will be used to populate the displayed page with data or error responses.
 
-##### Company by ID
+#### Company by ID
 
 Accessing a company by *id* will require passing the company ID to via the Web API query.
 For example `<web address>/GetCompanyById?id=<id>`
 
-##### Company list
+#### Company list
 
 Accessing a company list will be paged based on a *count* per page to display value.
 
