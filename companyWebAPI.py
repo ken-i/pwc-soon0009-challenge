@@ -40,7 +40,7 @@ def home():
 def GetCompanyById(id: hug.types.text):
     # Returns the company data.
     # id    is the company id to fetch.
-    print("companyWebAPI.GetCompanyById: id [%s]" % id)
+    # print("companyWebAPI.GetCompanyById: id [%s]" % id)
     return companyAPI.GetCompanyById(id)
 
 
@@ -50,8 +50,8 @@ def GetCompanyList(offset: hug.types.text, count: hug.types.text, restricted: hu
     # offset        is the offset into the result to start returning rows.
     # count         is the maximum number of companies to return in the list.
     # restricted    is an optional boolean integer [0|1] indicating the subset of companies to return.
-    restrict = "All" if restricted is None else str(restricted)
-    print("companyWebAPI.GetCompanyList: offset [%s] count [%s] restrict [%s]" % (offset, count, restrict) )
+    # restrict = "All" if restricted is None else str(restricted)
+    # print("companyWebAPI.GetCompanyList: offset [%s] count [%s] restrict [%s]" % (offset, count, restrict) )
     return companyAPI.GetCompanyList(offset, count, restricted)
 
 

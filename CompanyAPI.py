@@ -59,6 +59,15 @@ class CompanyAPI:
 
         jsonStr = ""
 
+        # Make sure we have digits and nothing more.
+        if id.isdigit() == False:
+            error = "Company ID [%s] is not valid" % id
+            respDict = { "result" : "error", "error" : error}
+            print("CompanyAPI.GetCompanyById: response [%s]" % respDict)
+            return respDict
+
+        # Get the company details.
+        row = []
         row = self.companyDB.GetCompanyById(id)
 
         # Check for no result.
@@ -84,15 +93,27 @@ class CompanyAPI:
         # restrict = "All" if restricted is None else str(restricted)
         # print("CompanyAPI.GetCompanyList: offset [%s] count [%s] restrict [%s]" % (offset, count, restrict) )
 
-        jsonStr = ""
+        # Make sure we only have valid values.
+        error = ""
+        if offset.isdigit() == False:
+            error = "Get Company List input parameter 'offset' [%s] is not valid" % offset
+        elif (count.isdigit() and (int(count) > 0)) == False:
+            error = "Get Company List input parameter 'count' [%s] must be greater than zero" % count
+        elif (restricted is None) == False:
+            if ( (restricted.isdigit()) == False) or ( (int(restricted) < 0) or (int(restricted) > 1) ) == True:
+                error = "Get Company List input parameter 'restricted' [%s] must be [0 or 1]" % restricted
+        if error != "":
+            respDict = { "result" : "error", "error" : error}
+            print("CompanyAPI.GetCompanyList: response [%s]" % respDict)
+            return respDict
 
+        # Get the company list.
         rows = self.companyDB.GetCompanyList(offset, count, restricted)
 
         # Check for no result.
         if len(rows) == 0:
             restrict = "" if restricted is None else " Restricted" if restricted == "1" else " Not restricted"
-
-            error = "No companies matching search criteria -%s with offset [%s] into the result set" % (restrict, offset)
+            error = "No companies matching search criteria -%s with offset [%s] in the result set" % (restrict, offset)
             respDict = { "result" : "error", "error" : error}
             print("CompanyAPI.GetCompanyList: response [%s]" % respDict)
             return respDict

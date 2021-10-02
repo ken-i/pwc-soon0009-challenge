@@ -53,7 +53,7 @@ class CompanyDB:
         #     id, companyName, description, tagline, companyEmail, businessNumber, restricted
 
         sql = "INSERT INTO %s (id, companyName, description, tagline, companyEmail, businessNumber, restricted) " % self.table
-        sql += "VALUES (?, ?, ?, ?, ?, ?, ?)"
+        sql += "VALUES (?, ?, ?, ?, ?, ?, ?);"
         # print("Executing SQL statement [%s]" % sql)
         cursor.execute(sql, (row["id"], row["companyName"], row["description"], row["tagline"],
                              row["companyEmail"], row["businessNumber"], row["restricted"]) )
@@ -71,7 +71,7 @@ class CompanyDB:
         self.minkey = 0
         self.maxkey = 0
 
-        sql = 'SELECT count(*), min(id), max(id) FROM %s' % self.table
+        sql = 'SELECT count(*), min(id), max(id) FROM %s;' % self.table
         # print("Executing SQL statement [%s]" % sql)
         for x in cursor.execute(sql):
             self.totalcount = int(x[0])
@@ -86,12 +86,16 @@ class CompanyDB:
         # Get a specific company by id and return its details.
         # print("CompanyDB.GetCompanyById: id [%s]" % id)
 
+        # Guard against injected SQL - make sure we have digits and nothing more.
+        row = []
+        if id.isdigit() != True:
+            return row
+
         sql = "SELECT id, companyName, description, tagline, companyEmail, businessNumber, restricted"
         sql += " FROM %s" % self.table
-        sql += " WHERE id = %s" % str(id)
+        sql += " WHERE id = %s;" % str(id)
         # print("Executing SQL statement [%s]" % sql)
 
-        row = []
         for x in cursor.execute(sql):
             if x[0] != "":
                 row = x
@@ -109,16 +113,21 @@ class CompanyDB:
         # restrict = "All" if restricted is None else str(restricted)
         # print("CompanyDB.GetCompanyList: offset [%s] count [%s] restrict [%s]" % (offset, count, restrict) )
 
+        # Guard against injected SQL - make sure we have digits and nothing more.
+        rows = {}
+        okay = offset.isdigit() and count.isdigit() and ( restricted is None or restricted.isdigit() )
+        if okay == False:
+            return rows
+
         sql = "SELECT id, companyName, description, tagline, companyEmail, businessNumber, restricted"
         sql += " FROM %s" % self.table
         if restricted is not None:
             sql += " WHERE restricted = %s" % restricted
         sql += " ORDER BY id"
         sql += " LIMIT %s" % str(count)
-        sql += " OFFSET %s" % str(offset)
+        sql += " OFFSET %s;" % str(offset)
         # print("Executing SQL statement [%s]" % sql)
 
-        rows = {}
         for x in cursor.execute(sql):
             if x[0] != "":
                 key = x[0]
@@ -144,6 +153,6 @@ class CompanyDB:
         sql += ', companyEmail TEXT'
         sql += ', businessNumber TEXT'
         sql += ', restricted INTEGER DEFAULT 0'
-        sql += ')'
+        sql += ');'
         # print("Executing SQL statement [%s]" % sql)
         cursor.execute(sql)
