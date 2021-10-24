@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>REST Client</title>
+<title>REST Fetch Client</title>
 </head>
 <body>
     <h1>Company GET Form</h1>
@@ -22,13 +22,19 @@
         compID = document.querySelector("#compID").value
         const resource = "http://localhost:8000/GetCompanyById?id="+compID;
         document.querySelector("#request").value = resource
+
+        const myHeaders = new Headers();
+        myHeaders.append("Accept", "application/json");
+//        myHeaders.append("Access-Control-Allow-Origin", "*");
+
         const myInit = {
             method: 'GET',
-            headers: {},
+            headers: myHeaders,
             mode: 'no-cors',
             cache: 'default'
         };
         const request = new Request(resource, myInit);
+
         fetch(request)
         .then(function(response) {
             if (!response.ok) {
@@ -40,9 +46,11 @@
         .then(function(json) {
             console.error("Response - about to process JSON data: " + json);
             var result = json.result;
+            console.error("JSON result - " + result);
             document.querySelector("#result").value = result;
             if (ressult != "ok") {
                 var error = json.error;
+                console.error("JSON error - " + error);
                 document.querySelector("#error").value = error;
             }
             else {
@@ -75,87 +83,7 @@
     }
 }
 
-    fetch(request)
-    .then(response => {
-        console.error("Response - " + response);
-        var myJSON = response.json();
-        console.error("myJSON - " + myJSON);
-        console.error("Response - process JSON data");
-        var result = myJSON.result;
-        document.querySelector("#result").value = result;
-        if (ressult != "ok") {
-            var error = myJSON.error;
-            document.querySelector("#error").value = error;
-        }
-        else {
-            document.querySelector("#error").value = "";
-        }
-    })
-    .catch(error => {
-        document.querySelector("#error").value = error;
-        console.error(error);
-    });
 
-    fetch(request)
-    .then(response => {
-        console.error("Response - about to convert JSON");
-        response.json();
-        console.error("Response - about to process JSON data");
-    })
-    .then(json => {
-        console.error("Response - process JSON data: " + json);
-        var result = json.result;
-        document.querySelector("#result").value = result;
-        if (ressult != "ok") {
-            var error = json.error;
-            document.querySelector("#error").value = error;
-        }
-        else {
-            document.querySelector("#error").value = "";
-        }
-    })
-    .catch(error => {
-        document.querySelector("#error").value = error;
-        console.error(error);
-    });
-
-    fetch(request).then(response => {
-        console.error("Response - about to convert JSON");
-        return response.json().then(data => {
-            console.error("Response - about to process JSON data");
-            var result = data.result;
-            document.querySelector("#result").value = result;
-            if (ressult != "ok") {
-                var error = data.error;
-                document.querySelector("#error").value = error;
-            }
-            else {
-                document.querySelector("#error").value = "";
-            }
-        })
-    })
-    .catch(error => {
-        document.querySelector("#error").value = error;
-        console.error(error);
-    });
-
-    fetch(request)
-    .then(response => response.json())
-    .then(data => {
-        var result = data.result;
-        document.querySelector("#result").value = result;
-        if (ressult != "ok") {
-            var error = data.error;
-            document.querySelector("#error").value = error;
-        }
-        else {
-            document.querySelector("#error").value = "";
-        }
-    })
-    .catch(error => {
-        document.querySelector("#error").value = error;
-        console.error(error);
-    });
 
     .then(response => {
         if (!response.ok) {
@@ -163,6 +91,8 @@
         }
         return response.json();
     })
+
+
 
     .then(response => response.text())
     .then(text => {

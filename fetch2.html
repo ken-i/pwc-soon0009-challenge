@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>REST Fetch Client</title>
+</head>
+<body>
+    <h1>Company GET Form</h1>
+    <form>
+        <label>Company ID:</label> <input id="compID" type="number" /><br>
+        <label>Request:</label> <textarea id="request" name="request" rows="1" cols="100"/></textarea><br>
+        <h2>Response</h2>
+        <label>Result:</label> <input id="result" type="text" /><br>
+        <label>Error:</label> <textarea id="error" name="error" rows="1" cols="100"/></textarea><br>
+        <label>Raw:</label> <textarea id="raw" name="raw" rows="10" cols="100"/></textarea><br>
+    </form><br>
+    <button onclick="getResource()">Get Resource</button>
+</body>
+<script>
+    function getResource() {
+        compID = document.querySelector("#compID").value
+        const resource = "http://localhost:8000/GetCompanyById?id="+compID;
+        document.querySelector("#request").value = resource
+
+        const myHeaders = new Headers();
+        myHeaders.append("Accept", "application/json");
+//        myHeaders.append("Access-Control-Allow-Origin", "*");
+
+        const myInit = {
+            method: 'GET',
+            headers: myHeaders,
+            mode: 'no-cors',
+            cache: 'default'
+        };
+        const request = new Request(resource, myInit);
+
+        fetch(request)
+        .then(response => {
+            console.error("Response - " + response);
+            var myJSON = response.json();
+            console.error("myJSON - " + myJSON);
+            console.error("Response - process JSON data");
+            var result = myJSON.result;
+            console.error("JSON result - " + result);
+            document.querySelector("#result").value = result;
+            if (ressult != "ok") {
+                var error = myJSON.error;
+                console.error("JSON error - " + error);
+                document.querySelector("#error").value = error;
+            }
+            else {
+                document.querySelector("#error").value = "";
+            }
+        })
+        .catch(error => {
+            document.querySelector("#error").value = error;
+            console.error(error);
+        });
+    }
+</script>
+
+<!--
+{
+    "result": "error",
+    "error": "No company found with ID [0]"
+}
+
+{
+    "result": "ok",
+    "data": {
+        "id": 1,
+        "companyName": "Bergstrom PLC",
+        "description": "Reactive Content-Based Complexity",
+        "tagline": "Drive Leading-Edge Architectures",
+        "companyEmail": "becker.jeremie@nikolaus.com",
+        "businessNumber": "682216138",
+        "restricted": "No"
+    }
+}
+
+
+
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("HTTP error, status = " + response.status);
+        }
+        return response.json();
+    })
+
+
+
+    .then(response => response.text())
+    .then(text => {
+        document.querySelector("#raw").value = text;
+    })
+-->
+
+</html>
